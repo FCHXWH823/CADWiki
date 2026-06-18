@@ -1,0 +1,386 @@
+{
+  "topics": [
+    {
+      "id": "rtl-generation",
+      "title": "LLM-aided RTL Generation",
+      "color": "blue",
+      "subtopics": [
+        {
+          "id": "nl-to-rtl",
+          "title": "RTL Generation from Natural Language",
+          "units": [
+            {
+              "id": "autochip",
+              "title": "AutoChip",
+              "slug": "autochip",
+              "description": "Generates functional Verilog modules from an initial design prompt and testbench using a selected LLM. Compilation and simulation errors are fed back into the LLM for iterative repair.",
+              "keyIdea": "Iterative LLM-driven Verilog generation with EDA tool feedback loop for automatic error correction.",
+              "paper": "https://arxiv.org/abs/2311.04887",
+              "code": "https://github.com/shailja-thakur/AutoChip",
+              "slides": "https://github.com/FCHXWH823/LLM4Hardware/blob/main/slides/ETS%202025%20Tutorial.pptx",
+              "hasLab": true,
+              "labType": "autochip",
+              "difficulty": "beginner",
+              "tags": ["verilog", "generation", "iterative", "feedback"]
+            },
+            {
+              "id": "rome",
+              "title": "ROME",
+              "slug": "rome",
+              "description": "Uses hierarchical prompting to decompose complex designs so smaller open-source LLMs can generate larger Verilog systems with better quality and lower cost.",
+              "keyIdea": "Hierarchical decomposition of hardware design tasks enables smaller LLMs to handle complex Verilog generation.",
+              "paper": "https://arxiv.org/abs/2407.18276",
+              "code": "https://github.com/ajn313/ROME-LLM/tree/main",
+              "slides": "https://github.com/FCHXWH823/LLM4Hardware/blob/main/slides/MLCAD%20ROME%20Presentation.pptx",
+              "hasLab": true,
+              "labType": "rome",
+              "difficulty": "intermediate",
+              "tags": ["verilog", "hierarchical", "decomposition", "open-source-llm"]
+            },
+            {
+              "id": "veritas",
+              "title": "Veritas",
+              "slug": "veritas",
+              "description": "Has an LLM generate CNF clauses as a formal functional specification and deterministically converts CNF to Verilog for correctness by construction.",
+              "keyIdea": "NL → CNF clauses (via LLM) → deterministic Verilog synthesis ensures correctness by construction.",
+              "paper": "https://arxiv.org/pdf/2506.00005v1",
+              "code": "https://github.com/PrithwishBasuRoy/Veritas",
+              "slides": "https://github.com/FCHXWH823/LLM4Hardware/blob/main/slides/Veritas-Presentations.pptx",
+              "hasLab": true,
+              "labType": "veritas",
+              "difficulty": "advanced",
+              "tags": ["verilog", "CNF", "formal", "correctness"]
+            },
+            {
+              "id": "prefixllm",
+              "title": "PrefixLLM",
+              "slug": "prefixllm",
+              "description": "Represents prefix-adder synthesis as structured text (SPCR) and performs iterative LLM-guided design space exploration to optimize area and delay.",
+              "keyIdea": "Prefix circuit synthesis as structured text enables LLM-driven design space exploration for optimal area/delay.",
+              "paper": "https://arxiv.org/abs/2412.02594",
+              "code": "https://github.com/FCHXWH823/PrefixGPT",
+              "hasLab": false,
+              "labType": null,
+              "difficulty": "advanced",
+              "tags": ["prefix-adder", "design-space-exploration", "optimization"]
+            },
+            {
+              "id": "veridispatcher",
+              "title": "VeriDispatcher",
+              "slug": "veridispatcher",
+              "description": "Dispatches RTL tasks to LLMs using pre-inference difficulty prediction to improve quality and reduce cost. Routes each task to the most suitable model.",
+              "keyIdea": "Multi-LLM routing via pre-inference difficulty prediction reduces cost while maintaining RTL quality.",
+              "paper": "https://www.arxiv.org/abs/2511.22749",
+              "code": "https://github.com/zwangsyc/VeriOracle/tree/main",
+              "hasLab": false,
+              "labType": null,
+              "difficulty": "advanced",
+              "tags": ["multi-model", "routing", "difficulty-prediction", "cost-optimization"]
+            }
+          ]
+        },
+        {
+          "id": "finetuned-rtl",
+          "title": "Finetuned LLMs for RTL Generation",
+          "units": [
+            {
+              "id": "vgen",
+              "title": "VGen",
+              "slug": "vgen",
+              "description": "Fine-tunes pre-trained LLMs on Verilog code from GitHub and textbooks. Evaluates them with syntax and testbench-based functional checks.",
+              "keyIdea": "Fine-tuning on curated Verilog datasets (GitHub + textbooks) improves LLM Verilog generation with functional evaluation.",
+              "paper": "https://arxiv.org/abs/2212.11140",
+              "code": "https://github.com/shailja-thakur/VGen",
+              "hasLab": false,
+              "labType": null,
+              "difficulty": "intermediate",
+              "tags": ["fine-tuning", "verilog", "benchmark", "evaluation"]
+            },
+            {
+              "id": "verithoughts",
+              "title": "VeriThoughts",
+              "slug": "verithoughts",
+              "description": "Provides a formal-verification-based pipeline to build a reasoning-oriented Verilog dataset and fine-tune LLMs for high-accuracy Verilog generation.",
+              "keyIdea": "Formal verification grounded dataset enables reasoning-based Verilog generation with correctness guarantees.",
+              "paper": "https://arxiv.org/abs/2505.20302",
+              "code": "https://github.com/wilyub/VeriThoughts",
+              "hasLab": false,
+              "labType": null,
+              "difficulty": "advanced",
+              "tags": ["reasoning", "fine-tuning", "formal-verification", "dataset"]
+            },
+            {
+              "id": "verireason",
+              "title": "VeriReason",
+              "slug": "verireason",
+              "description": "A DeepSeek-R1-inspired RTL generation framework combining supervised fine-tuning with GRPO reinforcement learning and feedback-driven rewards.",
+              "keyIdea": "RL with testbench feedback (GRPO) teaches LLMs autonomous error correction for Verilog generation.",
+              "paper": "https://arxiv.org/abs/2505.11849",
+              "code": "https://github.com/NellyW8/VeriReason",
+              "hasLab": false,
+              "labType": null,
+              "difficulty": "advanced",
+              "tags": ["reinforcement-learning", "GRPO", "fine-tuning", "reasoning"]
+            },
+            {
+              "id": "vericontaminated",
+              "title": "VeriContaminated",
+              "slug": "vericontaminated",
+              "description": "First systematic analysis of data contamination in LLM-based Verilog code generation, evaluating major models on VerilogEval and RTLLM benchmarks.",
+              "keyIdea": "Benchmark contamination analysis exposes validity issues in SOTA Verilog LLM evaluations.",
+              "paper": "https://arxiv.org/abs/2503.13572",
+              "code": "https://github.com/DfX-NYUAD/VeriContaminated",
+              "hasLab": false,
+              "labType": null,
+              "difficulty": "intermediate",
+              "tags": ["benchmark", "contamination", "evaluation", "fairness"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "rtl-verification",
+      "title": "LLM-aided RTL Verification",
+      "color": "green",
+      "subtopics": [
+        {
+          "id": "simulation-verification",
+          "title": "Simulation-based Verification",
+          "units": [
+            {
+              "id": "testbench-gen",
+              "title": "Testbench Generation",
+              "slug": "testbench-gen",
+              "description": "Given RTL under test and a natural-language description, generates comprehensive test patterns refined using EDA tool feedback to improve coverage and expose bugs.",
+              "keyIdea": "Iterative LLM-driven testbench generation with EDA feedback improves coverage for FSM verification.",
+              "paper": "https://arxiv.org/html/2406.17132v1",
+              "code": "https://github.com/jitendra-bhandari/LLM-Aided-Testbench-Generation-for-FSM",
+              "hasLab": true,
+              "labType": "testbench",
+              "difficulty": "beginner",
+              "tags": ["testbench", "FSM", "coverage", "simulation"]
+            },
+            {
+              "id": "masala-chai",
+              "title": "Masala-CHAI",
+              "slug": "masala-chai",
+              "description": "A fully automated framework leveraging LLMs to generate SPICE netlists for analog circuits, addressing challenges in automated netlist generation.",
+              "keyIdea": "Multimodal LLMs (GPT-4) can automate SPICE netlist generation for analog circuit design.",
+              "paper": "https://arxiv.org/abs/2411.14299",
+              "code": "https://github.com/jitendra-bhandari/Masala-CHAI",
+              "hasLab": false,
+              "labType": null,
+              "difficulty": "advanced",
+              "tags": ["SPICE", "analog", "netlist", "multimodal"]
+            }
+          ]
+        },
+        {
+          "id": "formal-verification",
+          "title": "Formal Verification",
+          "units": [
+            {
+              "id": "hybrid-nl2sva",
+              "title": "Hybrid-NL2SVA",
+              "slug": "hybrid-nl2sva",
+              "description": "A RAG framework for NL2SVA and a fine-tuning pipeline with a synthetic dataset to train lightweight LLMs to translate natural-language properties into SVAs.",
+              "keyIdea": "RAG + fine-tuning enables accurate translation of natural language properties to SystemVerilog assertions.",
+              "paper": "https://arxiv.org/pdf/2506.21569",
+              "code": "https://github.com/FCHXWH823/RAG-aided-Assertion-Generation",
+              "slides": "https://github.com/FCHXWH823/LLM4Hardware/blob/main/slides/MLCAD25-Hybrid-NL2SVA.pptx",
+              "hasLab": true,
+              "labType": "sva-gen",
+              "difficulty": "intermediate",
+              "tags": ["SVA", "RAG", "fine-tuning", "formal-verification"]
+            },
+            {
+              "id": "security-assertions",
+              "title": "Security Assertions",
+              "slug": "security-assertions",
+              "description": "Investigates LLMs for hardware assertion generation for security, using natural language prompts (code comments) to produce SystemVerilog assertions.",
+              "keyIdea": "LLMs can generate security-centric SystemVerilog assertions from natural language code comments.",
+              "paper": "https://arxiv.org/abs/2306.14027",
+              "slides": "https://github.com/FCHXWH823/LLM4Hardware/blob/main/slides/llm_assertion_slides.pptx",
+              "hasLab": true,
+              "labType": "security-assertions",
+              "difficulty": "beginner",
+              "tags": ["security", "SVA", "assertions", "natural-language"]
+            },
+            {
+              "id": "opentitan-rag-sva",
+              "title": "OpenTitan RAG SVA",
+              "slug": "opentitan-rag-sva",
+              "description": "Combines web scraping, semantic search, and LLMs to generate high-quality SVAs for OpenTitan hardware IP blocks using a RAG knowledge base.",
+              "keyIdea": "RAG over OpenTitan documentation enables context-aware SVA generation for real hardware IP.",
+              "code": "https://github.com/AnandMenon12/OpenTitan_RAG_SVAGEN",
+              "hasLab": false,
+              "labType": null,
+              "difficulty": "advanced",
+              "tags": ["RAG", "OpenTitan", "SVA", "IP-blocks"]
+            },
+            {
+              "id": "nspg",
+              "title": "NSPG",
+              "slug": "nspg",
+              "description": "A novel NLP-based Security Property Generator using hardware documentation. Introduces HS-BERT for extracting hardware security properties that convert to assertions.",
+              "keyIdea": "HS-BERT extracts security properties from hardware documentation, automating assertion generation.",
+              "paper": "https://dl.acm.org/doi/10.1145/3649329.3656255",
+              "code": "https://github.com/TIES-Lab/NSPG/tree/main",
+              "hasLab": false,
+              "labType": null,
+              "difficulty": "advanced",
+              "tags": ["NLP", "security-properties", "BERT", "documentation"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hardware-security",
+      "title": "LLM-aided Hardware Security",
+      "color": "red",
+      "subtopics": [
+        {
+          "id": "hardware-attacks",
+          "title": "Hardware Attacks",
+          "units": [
+            {
+              "id": "attrition",
+              "title": "ATTRITION",
+              "slug": "attrition",
+              "description": "A reinforcement-learning-based framework modeling a realistic adversary to evaluate and evade hardware Trojan detection methods, showing dramatically higher attack success than random insertion.",
+              "keyIdea": "RL-based adversarial framework exposes weaknesses in static hardware Trojan detection techniques.",
+              "paper": "https://arxiv.org/abs/2208.12897",
+              "code": "https://github.com/gohil-vasudev/ATTRITION",
+              "hasLab": false,
+              "labType": null,
+              "difficulty": "advanced",
+              "tags": ["hardware-trojan", "reinforcement-learning", "adversarial", "detection-evasion"]
+            },
+            {
+              "id": "ghost",
+              "title": "GHOST",
+              "slug": "ghost",
+              "description": "An automated LLM-based attack framework that generates and inserts stealthy, synthesizable Hardware Trojans into HDL designs, enabling rapid Trojan creation.",
+              "keyIdea": "LLMs can automatically generate and insert stealthy hardware Trojans, highlighting detection risks.",
+              "paper": "https://arxiv.org/abs/2412.02816",
+              "code": "https://github.com/NMSU-PEARL/GHOST_benchmarks",
+              "hasLab": false,
+              "labType": null,
+              "difficulty": "advanced",
+              "tags": ["hardware-trojan", "LLM-attack", "HDL", "security-risk"]
+            },
+            {
+              "id": "llmpirate",
+              "title": "LLMPirate",
+              "slug": "llmpirate",
+              "description": "LLM-driven rewriting to generate pirated circuit design variations that bypass state-of-the-art IP piracy detection tools, exposing a new hardware security threat.",
+              "keyIdea": "LLMs can rewrite HDL to evade piracy detection tools, creating an automated IP piracy threat.",
+              "paper": "https://arxiv.org/abs/2411.16111",
+              "slides": "https://github.com/FCHXWH823/LLM4Hardware/blob/main/slides/LLMPirate_slides.pptx",
+              "hasLab": false,
+              "labType": null,
+              "difficulty": "advanced",
+              "tags": ["IP-piracy", "detection-evasion", "HDL", "security"]
+            }
+          ]
+        },
+        {
+          "id": "hardware-defenses",
+          "title": "Hardware Defenses",
+          "units": [
+            {
+              "id": "noodle",
+              "title": "NOODLE",
+              "slug": "noodle",
+              "description": "Uncertainty-aware Trojan detection using GAN-based data augmentation and multimodal deep learning with uncertainty quantification for risk-aware decision-making.",
+              "keyIdea": "Multimodal DL with uncertainty quantification enables risk-aware hardware Trojan detection despite limited benchmarks.",
+              "paper": "https://arxiv.org/abs/2401.09479",
+              "code": "https://github.com/cars-lab-repo/NOODLE",
+              "hasLab": false,
+              "labType": null,
+              "difficulty": "advanced",
+              "tags": ["trojan-detection", "GAN", "multimodal", "uncertainty"]
+            },
+            {
+              "id": "trojanloc",
+              "title": "TrojanLoc",
+              "slug": "trojanloc",
+              "description": "Uses RTL-finetuned LLM embeddings and lightweight classifiers to detect Trojans, predict types, and localize suspicious RTL lines using TrojanInS dataset.",
+              "keyIdea": "RTL-finetuned embeddings enable Trojan detection, type prediction, and line-level localization.",
+              "hasLab": false,
+              "labType": null,
+              "difficulty": "advanced",
+              "tags": ["trojan-detection", "embeddings", "localization", "fine-tuning"]
+            },
+            {
+              "id": "lockforge",
+              "title": "LockForge",
+              "slug": "lockforge",
+              "description": "A multi-agent LLM framework that automates translation of logic locking schemes from research papers into executable, validated code.",
+              "keyIdea": "Multi-agent LLM pipeline (forethought → implement → refine → validate) converts LL papers to running code.",
+              "paper": "https://arxiv.org/abs/2511.18531",
+              "code": "https://github.com/codesanonymousgit-sudo/LockForge",
+              "hasLab": false,
+              "labType": null,
+              "difficulty": "advanced",
+              "tags": ["logic-locking", "multi-agent", "paper-to-code", "automation"]
+            },
+            {
+              "id": "salad",
+              "title": "SALAD",
+              "slug": "salad",
+              "description": "Assessment framework using machine unlearning to remove sensitive IP, contaminated benchmarks, and malicious patterns from LLMs without full retraining.",
+              "keyIdea": "Machine unlearning selectively removes harmful knowledge from Verilog LLMs while preserving model utility.",
+              "paper": "https://arxiv.org/abs/2506.02089",
+              "code": "https://github.com/DfX-NYUAD/SALAD",
+              "hasLab": false,
+              "labType": null,
+              "difficulty": "advanced",
+              "tags": ["machine-unlearning", "security", "IP-protection", "contamination"]
+            },
+            {
+              "id": "c2hlsc",
+              "title": "C2HLSC",
+              "slug": "c2hlsc",
+              "description": "Automated framework using LLMs to rewrite C code into HLS-synthesizable C, bridging the software-to-hardware design gap with divide-and-conquer hierarchy.",
+              "keyIdea": "LLMs iteratively refactor C code into HLS-compatible formats guided by tool feedback and hierarchy decomposition.",
+              "paper": "https://arxiv.org/abs/2412.00214",
+              "code": "https://github.com/Lucaz97/c2hlsc",
+              "slides": "https://github.com/FCHXWH823/LLM4Hardware/blob/main/slides/C2HLSC%20-%20Neurips%20Tutorial.pptx",
+              "hasLab": false,
+              "labType": null,
+              "difficulty": "intermediate",
+              "tags": ["HLS", "C-to-hardware", "software-hardware-gap", "synthesis"]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "id": "verilog-adder",
+      "title": "LLM-Based Verilog Adder Generation and Verification",
+      "description": "Explore LLM capabilities in hardware design by generating and verifying Verilog for digital adder circuits. Covers reverse engineering, LLM generation, and testbench-based verification.",
+      "objectives": [
+        "Understand how LLMs can interpret and generate HDL code",
+        "Practice reverse engineering Verilog designs into natural language specs",
+        "Evaluate accuracy of LLM-generated Verilog against golden reference designs",
+        "Learn to leverage LLMs for automated testbench generation",
+        "Gain hands-on experience with hardware simulation tools (Iverilog)"
+      ],
+      "tutorial": "https://github.com/FCHXWH823/LLM4ChipDesign/blob/main/FinalProjects/Verilog%20Adder%20Generation.pdf",
+      "difficulty": "beginner"
+    }
+  ],
+  "models": [
+    {"id": "@vertexai/gemini-2.5-pro", "label": "Gemini 2.5 Pro", "provider": "Google", "type": "reasoning"},
+    {"id": "@vertexai/gemini-2.5-flash", "label": "Gemini 2.5 Flash", "provider": "Google", "type": "non-reasoning"},
+    {"id": "@gpt-4o/gpt-4o", "label": "GPT-4o", "provider": "OpenAI", "type": "non-reasoning"},
+    {"id": "@o4-mini/o4-mini", "label": "o4-mini", "provider": "OpenAI", "type": "reasoning"},
+    {"id": "@vertexai/anthropic.claude-sonnet-4-6", "label": "Claude Sonnet 4.6", "provider": "Anthropic", "type": "reasoning"},
+    {"id": "@bedrock/us.anthropic.claude-sonnet-4-20250514-v1:0", "label": "Claude Sonnet 4 (Bedrock)", "provider": "Anthropic", "type": "reasoning"}
+  ]
+}
