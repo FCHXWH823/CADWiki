@@ -22,9 +22,12 @@ function ModulesContent() {
   const [data, setData] = useState<ModulesData | null>(null)
   const [search, setSearch] = useState("")
   const [activeTopic, setActiveTopic] = useState<string | null>(topicFilter)
+  const [error, setError] = useState("")
 
   useEffect(() => {
-    fetchModules().then(setData).catch(console.error)
+    fetchModules()
+      .then(setData)
+      .catch((e) => setError(e.message ?? "Failed to load modules"))
   }, [])
 
   const topics: Topic[] = data?.topics ?? []
@@ -88,7 +91,14 @@ function ModulesContent() {
         </div>
       </div>
 
-      {!data && (
+      {error && (
+        <div className="text-center py-20">
+          <p className="text-red-600 font-medium mb-2">Failed to load modules</p>
+          <p className="text-sm text-gray-500 font-mono">{error}</p>
+          <p className="text-sm text-gray-400 mt-3">Check that the backend is running and CORS is configured correctly.</p>
+        </div>
+      )}
+      {!data && !error && (
         <div className="text-center py-20 text-gray-400">Loading modules...</div>
       )}
 
