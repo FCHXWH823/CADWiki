@@ -24,7 +24,7 @@ const EXAMPLE_RTL = `module arbiter (
 export default function SVAGenLabPage() {
   const [property, setProperty] = useState(EXAMPLE_PROPS[0])
   const [rtlContext, setRtlContext] = useState(EXAMPLE_RTL)
-  const [model, setModel] = useState("gpt-4o-mini")
+  const [model, setModel] = useState("@gpt-4o-mini/gpt-4o-mini")
   const [output, setOutput] = useState("")
   const [isLoading, setIsLoading] = useState(false)
 
@@ -46,7 +46,7 @@ export default function SVAGenLabPage() {
       )
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Unknown error"
-      setOutput(`**Error:** ${msg}\n\nMake sure you are connected to NYU VPN.`)
+      setOutput(`**Error:** ${msg}\n\nPlease try again in a moment.`)
       setIsLoading(false)
     }
   }

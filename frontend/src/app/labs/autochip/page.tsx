@@ -16,7 +16,7 @@ const EXAMPLE_SPEC = `Design a 4-bit synchronous up-counter with:
 
 export default function AutochipLabPage() {
   const [spec, setSpec] = useState(EXAMPLE_SPEC)
-  const [model, setModel] = useState("gpt-4o-mini")
+  const [model, setModel] = useState("@gpt-4o-mini/gpt-4o-mini")
   const [output, setOutput] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [iteration, setIteration] = useState(0)
@@ -54,7 +54,7 @@ export default function AutochipLabPage() {
       )
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Unknown error"
-      setOutput(`**Error:** ${msg}\n\nMake sure you are connected to NYU VPN and PORTKEY_API_KEY is configured.`)
+      setOutput(`**Error:** ${msg}\n\nPlease try again — if it persists, the backend may be misconfigured.`)
       setIsLoading(false)
     }
   }

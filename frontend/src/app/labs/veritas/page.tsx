@@ -24,7 +24,7 @@ const EXAMPLES = [
 
 export default function VeritasLabPage() {
   const [description, setDescription] = useState(EXAMPLES[0].desc)
-  const [model, setModel] = useState("gpt-4o")
+  const [model, setModel] = useState("@gpt-4o/gpt-4o")
   const [output, setOutput] = useState("")
   const [isLoading, setIsLoading] = useState(false)
 
@@ -45,7 +45,7 @@ export default function VeritasLabPage() {
       )
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Unknown error"
-      setOutput(`**Error:** ${msg}\n\nMake sure you are connected to NYU VPN.`)
+      setOutput(`**Error:** ${msg}\n\nPlease try again in a moment.`)
       setIsLoading(false)
     }
   }

@@ -25,8 +25,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Public Portkey API (default) or NYU gateway when on NYU VPN
-PORTKEY_BASE_URL = os.getenv("PORTKEY_BASE_URL", "https://api.portkey.ai/v1")
+# NYU AI Gateway (publicly reachable) — or override with any Portkey-compatible gateway
+PORTKEY_BASE_URL = os.getenv("PORTKEY_BASE_URL", "https://ai-gateway.apps.cloud.rt.nyu.edu/v1")
 PORTKEY_API_KEY = os.getenv("PORTKEY_API_KEY", "")
 
 DATA_DIR = Path(__file__).parent / "data"
@@ -36,6 +36,35 @@ def get_portkey_client() -> Portkey:
     if not PORTKEY_API_KEY:
         raise HTTPException(status_code=503, detail="PORTKEY_API_KEY not configured")
     return Portkey(base_url=PORTKEY_BASE_URL, api_key=PORTKEY_API_KEY)
+
+
+def sse_chat_stream(model: str, system: str, prompt: str, max_tokens: int = 2048):
+    """Stream an LLM chat completion as SSE, surfacing any error to the client."""
+    client = get_portkey_client()
+
+    async def stream() -> AsyncGenerator[str, None]:
+        try:
+            response = client.chat.completions.create(
+                model=model,
+                messages=[
+                    {"role": "system", "content": system},
+                    {"role": "user", "content": prompt},
+                ],
+                max_tokens=max_tokens,
+                stream=True,
+            )
+            for chunk in response:
+                if not chunk.choices:
+                    continue
+                delta = chunk.choices[0].delta
+                if delta and delta.content:
+                    yield f"data: {json.dumps({'text': delta.content})}\n\n"
+        except Exception as e:
+            err = f"{type(e).__name__}: {e}"
+            yield f"data: {json.dumps({'error': err})}\n\n"
+        yield "data: [DONE]\n\n"
+
+    return StreamingResponse(stream(), media_type="text/event-stream")
 
 
 # ── Data endpoints ────────────────────────────────────────────────────────────
@@ -64,14 +93,14 @@ def get_module(slug: str):
 
 class GenerateRequest(BaseModel):
     prompt: str
-    model: str = "gpt-4o-mini"
+    model: str = "@gpt-4o-mini/gpt-4o-mini"
     system: str = "You are an expert hardware design assistant specializing in Verilog and SystemVerilog."
     max_tokens: int = 2048
 
 
 class AutoChipRequest(BaseModel):
     spec: str
-    model: str = "gpt-4o-mini"
+    model: str = "@gpt-4o-mini/gpt-4o-mini"
     previous_code: str = ""
     error_feedback: str = ""
 
@@ -79,42 +108,24 @@ class AutoChipRequest(BaseModel):
 class SVARequest(BaseModel):
     natural_language: str
     rtl_context: str = ""
-    model: str = "gpt-4o-mini"
+    model: str = "@gpt-4o-mini/gpt-4o-mini"
 
 
 class TestbenchRequest(BaseModel):
     rtl_code: str
     description: str
-    model: str = "gpt-4o-mini"
+    model: str = "@gpt-4o-mini/gpt-4o-mini"
 
 
 class VeritasRequest(BaseModel):
     description: str
-    model: str = "gpt-4o-mini"
+    model: str = "@gpt-4o-mini/gpt-4o-mini"
 
 
 # Generic streaming generate
 @app.post("/api/generate")
 async def generate(req: GenerateRequest):
-    client = get_portkey_client()
-
-    async def stream() -> AsyncGenerator[str, None]:
-        response = client.chat.completions.create(
-            model=req.model,
-            messages=[
-                {"role": "system", "content": req.system},
-                {"role": "user", "content": req.prompt},
-            ],
-            max_tokens=req.max_tokens,
-            stream=True,
-        )
-        for chunk in response:
-            delta = chunk.choices[0].delta
-            if delta and delta.content:
-                yield f"data: {json.dumps({'text': delta.content})}\n\n"
-        yield "data: [DONE]\n\n"
-
-    return StreamingResponse(stream(), media_type="text/event-stream")
+    return sse_chat_stream(req.model, req.system, req.prompt, req.max_tokens)
 
 
 # ── AutoChip Lab ──────────────────────────────────────────────────────────────
@@ -132,8 +143,6 @@ Explain what you fixed after the code block."""
 
 @app.post("/api/labs/autochip")
 async def autochip_generate(req: AutoChipRequest):
-    client = get_portkey_client()
-
     if req.previous_code and req.error_feedback:
         system = AUTOCHIP_REPAIR_SYSTEM
         prompt = f"""Original specification:
@@ -152,23 +161,7 @@ Please fix the Verilog code to resolve these errors."""
         system = AUTOCHIP_SYSTEM
         prompt = f"Generate Verilog for the following specification:\n\n{req.spec}"
 
-    async def stream() -> AsyncGenerator[str, None]:
-        response = client.chat.completions.create(
-            model=req.model,
-            messages=[
-                {"role": "system", "content": system},
-                {"role": "user", "content": prompt},
-            ],
-            max_tokens=2048,
-            stream=True,
-        )
-        for chunk in response:
-            delta = chunk.choices[0].delta
-            if delta and delta.content:
-                yield f"data: {json.dumps({'text': delta.content})}\n\n"
-        yield "data: [DONE]\n\n"
-
-    return StreamingResponse(stream(), media_type="text/event-stream")
+    return sse_chat_stream(req.model, system, prompt)
 
 
 # ── SVA Generator Lab ─────────────────────────────────────────────────────────
@@ -184,30 +177,12 @@ Include:
 
 @app.post("/api/labs/sva-gen")
 async def sva_generate(req: SVARequest):
-    client = get_portkey_client()
-
     ctx = f"\n\nRTL Context:\n```verilog\n{req.rtl_context}\n```" if req.rtl_context else ""
     prompt = f"""Convert the following natural language property to a SystemVerilog assertion:{ctx}
 
 Property: {req.natural_language}"""
 
-    async def stream() -> AsyncGenerator[str, None]:
-        response = client.chat.completions.create(
-            model=req.model,
-            messages=[
-                {"role": "system", "content": SVA_SYSTEM},
-                {"role": "user", "content": prompt},
-            ],
-            max_tokens=1024,
-            stream=True,
-        )
-        for chunk in response:
-            delta = chunk.choices[0].delta
-            if delta and delta.content:
-                yield f"data: {json.dumps({'text': delta.content})}\n\n"
-        yield "data: [DONE]\n\n"
-
-    return StreamingResponse(stream(), media_type="text/event-stream")
+    return sse_chat_stream(req.model, SVA_SYSTEM, prompt, max_tokens=1024)
 
 
 # ── Testbench Generator Lab ───────────────────────────────────────────────────
@@ -224,8 +199,6 @@ Always wrap testbench in a ```verilog ... ``` block."""
 
 @app.post("/api/labs/testbench")
 async def testbench_generate(req: TestbenchRequest):
-    client = get_portkey_client()
-
     prompt = f"""Generate a comprehensive testbench for the following Verilog module.
 
 Module Description: {req.description}
@@ -235,23 +208,7 @@ RTL Code:
 {req.rtl_code}
 ```"""
 
-    async def stream() -> AsyncGenerator[str, None]:
-        response = client.chat.completions.create(
-            model=req.model,
-            messages=[
-                {"role": "system", "content": TESTBENCH_SYSTEM},
-                {"role": "user", "content": prompt},
-            ],
-            max_tokens=2048,
-            stream=True,
-        )
-        for chunk in response:
-            delta = chunk.choices[0].delta
-            if delta and delta.content:
-                yield f"data: {json.dumps({'text': delta.content})}\n\n"
-        yield "data: [DONE]\n\n"
-
-    return StreamingResponse(stream(), media_type="text/event-stream")
+    return sse_chat_stream(req.model, TESTBENCH_SYSTEM, prompt)
 
 
 # ── Veritas Lab (NL → CNF → Verilog) ─────────────────────────────────────────
@@ -267,27 +224,9 @@ Show both steps clearly labeled: "## Step 1: CNF Specification" and "## Step 2: 
 
 @app.post("/api/labs/veritas")
 async def veritas_generate(req: VeritasRequest):
-    client = get_portkey_client()
-
     prompt = f"Generate CNF specification then Verilog for:\n\n{req.description}"
 
-    async def stream() -> AsyncGenerator[str, None]:
-        response = client.chat.completions.create(
-            model=req.model,
-            messages=[
-                {"role": "system", "content": VERITAS_SYSTEM},
-                {"role": "user", "content": prompt},
-            ],
-            max_tokens=2048,
-            stream=True,
-        )
-        for chunk in response:
-            delta = chunk.choices[0].delta
-            if delta and delta.content:
-                yield f"data: {json.dumps({'text': delta.content})}\n\n"
-        yield "data: [DONE]\n\n"
-
-    return StreamingResponse(stream(), media_type="text/event-stream")
+    return sse_chat_stream(req.model, VERITAS_SYSTEM, prompt)
 
 
 # ── Health ────────────────────────────────────────────────────────────────────

@@ -123,7 +123,7 @@ export default function HomePage() {
             {
               step: "3",
               title: "No API Key Needed",
-              desc: "All LLM calls go through the NYU AI Gateway (Portkey). Students just connect to NYU VPN.",
+              desc: "All LLM calls go through the NYU AI Gateway (Portkey). The key lives on the server — students need nothing.",
             },
           ].map(({ step, title, desc }) => (
             <div key={step} className="flex flex-col items-center gap-3">

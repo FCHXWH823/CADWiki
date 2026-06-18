@@ -36,7 +36,7 @@ const EXAMPLE_DESC = "A 3-state traffic light FSM cycling through RED→GREEN→
 export default function TestbenchLabPage() {
   const [rtlCode, setRtlCode] = useState(EXAMPLE_RTL)
   const [description, setDescription] = useState(EXAMPLE_DESC)
-  const [model, setModel] = useState("gpt-4o-mini")
+  const [model, setModel] = useState("@gpt-4o-mini/gpt-4o-mini")
   const [output, setOutput] = useState("")
   const [isLoading, setIsLoading] = useState(false)
 
@@ -58,7 +58,7 @@ export default function TestbenchLabPage() {
       )
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Unknown error"
-      setOutput(`**Error:** ${msg}\n\nMake sure you are connected to NYU VPN.`)
+      setOutput(`**Error:** ${msg}\n\nPlease try again in a moment.`)
       setIsLoading(false)
     }
   }

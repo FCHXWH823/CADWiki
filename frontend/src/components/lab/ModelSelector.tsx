@@ -3,13 +3,13 @@
 import { LLMModel } from "@/lib/types"
 
 const MODELS: LLMModel[] = [
-  { id: "gpt-4o-mini", label: "GPT-4o mini", provider: "OpenAI", type: "non-reasoning" },
-  { id: "gpt-4o", label: "GPT-4o", provider: "OpenAI", type: "non-reasoning" },
-  { id: "o4-mini", label: "o4-mini", provider: "OpenAI", type: "reasoning" },
-  { id: "claude-sonnet-4-5", label: "Claude Sonnet 4.5", provider: "Anthropic", type: "reasoning" },
-  { id: "claude-haiku-4-5", label: "Claude Haiku 4.5", provider: "Anthropic", type: "non-reasoning" },
-  { id: "gemini-2.5-flash", label: "Gemini 2.5 Flash", provider: "Google", type: "non-reasoning" },
-  { id: "gemini-2.5-pro", label: "Gemini 2.5 Pro", provider: "Google", type: "reasoning" },
+  { id: "@gpt-4o-mini/gpt-4o-mini", label: "GPT-4o mini", provider: "OpenAI", type: "non-reasoning" },
+  { id: "@gpt-4o/gpt-4o", label: "GPT-4o", provider: "OpenAI", type: "non-reasoning" },
+  { id: "@o4-mini/o4-mini", label: "o4-mini", provider: "OpenAI", type: "reasoning" },
+  { id: "@vertexai/anthropic.claude-sonnet-4-6", label: "Claude Sonnet 4.6", provider: "Anthropic", type: "reasoning" },
+  { id: "@vertexai/anthropic.claude-haiku-4-5@20251001", label: "Claude Haiku 4.5", provider: "Anthropic", type: "non-reasoning" },
+  { id: "@vertexai/gemini-2.5-flash", label: "Gemini 2.5 Flash", provider: "Google", type: "non-reasoning" },
+  { id: "@vertexai/gemini-2.5-pro", label: "Gemini 2.5 Pro", provider: "Google", type: "reasoning" },
 ]
 
 interface Props {

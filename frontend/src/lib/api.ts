@@ -45,10 +45,14 @@ async function streamRequest(
           onDone()
           return
         }
+        let parsed: { text?: string; error?: string } | null = null
         try {
-          const parsed = JSON.parse(data)
-          if (parsed.text) onChunk(parsed.text)
-        } catch {}
+          parsed = JSON.parse(data)
+        } catch {
+          // ignore partial / non-JSON lines
+        }
+        if (parsed?.error) throw new Error(parsed.error)
+        if (parsed?.text) onChunk(parsed.text)
       }
     }
   }

@@ -67,13 +67,8 @@ export default function LabsPage() {
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Interactive Labs</h1>
         <p className="text-gray-600">
           Run live LLM experiments directly in your browser — no API key required.
-          All calls route through the NYU AI Gateway (connect to NYU VPN first).
+          All calls route through the NYU AI Gateway, powered by Portkey.
         </p>
-      </div>
-
-      <div className="bg-amber-50 border border-amber-200 rounded-lg px-4 py-3 mb-8 text-sm text-amber-800">
-        <strong>NYU VPN Required:</strong> The AI Gateway is only accessible on the NYU network.
-        Connect to NYU VPN before using any lab.
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
