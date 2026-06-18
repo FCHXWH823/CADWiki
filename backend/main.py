@@ -31,7 +31,7 @@ app.add_middleware(
 PORTKEY_BASE_URL = os.getenv("PORTKEY_BASE_URL", "https://api.portkey.ai/v1")
 PORTKEY_API_KEY = os.getenv("PORTKEY_API_KEY", "")
 
-DATA_DIR = Path(__file__).parent.parent / "data"
+DATA_DIR = Path(__file__).parent / "data"
 
 
 def get_portkey_client() -> Portkey:
