@@ -1,12 +1,13 @@
 import json
 import os
 from pathlib import Path
-from typing import AsyncGenerator
+from typing import Iterator
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
+from starlette.concurrency import iterate_in_threadpool
 from portkey_ai import Portkey
 from pydantic import BaseModel
 
@@ -32,39 +33,51 @@ PORTKEY_API_KEY = os.getenv("PORTKEY_API_KEY", "")
 DATA_DIR = Path(__file__).parent / "data"
 
 
+# Upstream request timeout (seconds) — connect + read. Keeps a slow/unreachable
+# gateway from hanging a request forever.
+UPSTREAM_TIMEOUT = float(os.getenv("UPSTREAM_TIMEOUT", "60"))
+
+
 def get_portkey_client() -> Portkey:
     if not PORTKEY_API_KEY:
         raise HTTPException(status_code=503, detail="PORTKEY_API_KEY not configured")
-    return Portkey(base_url=PORTKEY_BASE_URL, api_key=PORTKEY_API_KEY)
+    return Portkey(
+        base_url=PORTKEY_BASE_URL,
+        api_key=PORTKEY_API_KEY,
+        timeout=UPSTREAM_TIMEOUT,
+        max_retries=0,
+    )
+
+
+def _sync_sse(model: str, system: str, prompt: str, max_tokens: int) -> Iterator[str]:
+    """Blocking generator that yields SSE lines. Runs in a threadpool so the
+    synchronous Portkey network reads never block the async event loop."""
+    try:
+        client = get_portkey_client()
+        response = client.chat.completions.create(
+            model=model,
+            messages=[
+                {"role": "system", "content": system},
+                {"role": "user", "content": prompt},
+            ],
+            max_tokens=max_tokens,
+            stream=True,
+        )
+        for chunk in response:
+            if not chunk.choices:
+                continue
+            delta = chunk.choices[0].delta
+            if delta and delta.content:
+                yield f"data: {json.dumps({'text': delta.content})}\n\n"
+    except Exception as e:
+        yield f"data: {json.dumps({'error': f'{type(e).__name__}: {e}'})}\n\n"
+    yield "data: [DONE]\n\n"
 
 
 def sse_chat_stream(model: str, system: str, prompt: str, max_tokens: int = 2048):
     """Stream an LLM chat completion as SSE, surfacing any error to the client."""
-    client = get_portkey_client()
-
-    async def stream() -> AsyncGenerator[str, None]:
-        try:
-            response = client.chat.completions.create(
-                model=model,
-                messages=[
-                    {"role": "system", "content": system},
-                    {"role": "user", "content": prompt},
-                ],
-                max_tokens=max_tokens,
-                stream=True,
-            )
-            for chunk in response:
-                if not chunk.choices:
-                    continue
-                delta = chunk.choices[0].delta
-                if delta and delta.content:
-                    yield f"data: {json.dumps({'text': delta.content})}\n\n"
-        except Exception as e:
-            err = f"{type(e).__name__}: {e}"
-            yield f"data: {json.dumps({'error': err})}\n\n"
-        yield "data: [DONE]\n\n"
-
-    return StreamingResponse(stream(), media_type="text/event-stream")
+    iterator = iterate_in_threadpool(_sync_sse(model, system, prompt, max_tokens))
+    return StreamingResponse(iterator, media_type="text/event-stream")
 
 
 # ── Data endpoints ────────────────────────────────────────────────────────────
